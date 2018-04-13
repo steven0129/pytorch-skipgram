@@ -3,11 +3,13 @@ from sklearn import preprocessing
 import numpy as np
 import pickle
 import csv
+import os
 
-class WhiteSnake(data.Dataset):
+class Dataset(data.Dataset):
     def __init__(self, ratio=0.6, seed=1):
-        self.labelEncoder = pickle.load(open('./data/label.pickle', 'rb'))
-        data = list(csv.reader(open('./data/white-snake-preprocessor.csv', 'r')))
+        currentDir = os.path.dirname(os.path.abspath(__file__))
+        self.labelEncoder = pickle.load(open('{}/label.pickle'.format(currentDir), 'rb'))
+        data = list(csv.reader(open('{}/white-snake-preprocessor.csv'.format(currentDir), 'r')))
         data = sum(data[:int(len(data)*ratio)], [])
         self.length = list(map(lambda x: len(x), data))
         self.data = data
