@@ -5,3 +5,4 @@ class Env(object):
     core = 1 # 使用核心數
     epochs = 50 # epoch
     use_gpu = False # 是否使用GPU
+    window_size = 3
