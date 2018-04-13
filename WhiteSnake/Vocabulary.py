@@ -21,8 +21,8 @@ class Dataset(data.Dataset):
         self.data = data
 
     def __getitem__(self, index):
-        elements = [self.data[index + i] for i in range(self.windowSize)]
-        labels = self.labelEncoder.transform(elements).tolist()
+        window = [self.data[index + i] for i in range(self.windowSize)]
+        labels = self.labelEncoder.transform(window).tolist()
         item = [(labels[i], labels[i + 1]) for i in range(len(labels) - 1)] if not self.windowSize == 2 else [] # 兩兩配對
         item.append((labels[-1], labels[0])) # 第一與最後配對
         return tuple(item)
