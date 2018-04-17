@@ -4,7 +4,6 @@ import numpy as np
 import pickle
 import csv
 import os
-import functools
 
 
 class Dataset(data.Dataset):
@@ -27,12 +26,24 @@ class Dataset(data.Dataset):
         self.data = data
 
     def __getitem__(self, index):
-        window = [self.data[index + i] for i in range(self.windowSize)]
-        labels = self.labelEncoder.transform(window).tolist()
-        item = [(labels[i], labels[i + 1]) for i in range(len(labels) - 1)
-                ] if not self.windowSize == 2 else []  # 兩兩配對
-        item.append((labels[-1], labels[0]))  # 第一與最後配對
-        return tuple(item)
+        length = self.lengths[index]
+        windows = self.data[-(self.windowSize - 1):] + self.data + self.data[:self.windowSize]
+        windows = self.labelEncoder.transform(windows).tolist()
+        index += self.windowSize - 1
+
+        contexts1 = windows[length + index - self.windowSize:length + index - 1]
+        contexts2 = windows[length + index:length + index + self.windowSize - 1]
+        center = windows[length + index - 1]
+        contextWords = []
+
+        for i, context in enumerate(contexts1):
+            contextWords.extend([context] * (i + 1))
+
+        contexts2.reverse()
+        for i, context in enumerate(contexts2):
+            contextWords.extend([context] * (i + 1))
+
+        return tuple((center, contextWords))
 
     def __len__(self):
-        return len(self.data) - (self.windowSize - 1)
+        return len(self.data)
