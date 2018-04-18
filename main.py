@@ -20,7 +20,10 @@ def train(**kwargs):
 
     print('將每對pair分別存入X與Y...')
     for pairs in tqdm(whiteSnake):
-        XY.append(list(pairs))
+        try:
+            XY.append(list(pairs))
+        except:
+            tqdm.write('error word')
     
     X = list(list(zip(*XY))[0])
     Y = list(list(zip(*XY))[1])
