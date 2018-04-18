@@ -20,8 +20,8 @@ class Word2Vec(Bundler):
         self.embedding_size = embedding_size
         self.ivectors = nn.Embedding(self.vocab_size, self.embedding_size, padding_idx=padding_idx)
         self.ovectors = nn.Embedding(self.vocab_size, self.embedding_size, padding_idx=padding_idx)
-        self.ivectors.weights = nn.Parameter(torch.cat([torch.zeros(1, self.embedding_size), torch.FloatTensor(self.vocab_size - 1, self.embedding_size).uniform_(-0.5 / self.embedding_size, 0.5 / self.embedding_size)]))
-        self.ovectors.weights = nn.Parameter(torch.cat([torch.zeros(1, self.embedding_size), torch.FloatTensor(self.vocab_size - 1, self.embedding_size).uniform_(-0.5 / self.embedding_size, 0.5 / self.embedding_size)]))
+        self.ivectors.weight = nn.Parameter(torch.cat([torch.zeros(1, self.embedding_size), torch.FloatTensor(self.vocab_size - 1, self.embedding_size).uniform_(-0.5 / self.embedding_size, 0.5 / self.embedding_size)]))
+        self.ovectors.weight = nn.Parameter(torch.cat([torch.zeros(1, self.embedding_size), torch.FloatTensor(self.vocab_size - 1, self.embedding_size).uniform_(-0.5 / self.embedding_size, 0.5 / self.embedding_size)]))
         self.ivectors.weight.requires_grad = True
         self.ovectors.weight.requires_grad = True
 
@@ -30,7 +30,7 @@ class Word2Vec(Bundler):
 
     def forward_i(self, data):
         v = Variable(data, requires_grad=False)
-        v = v.cuda() if self.ivectors.weights.is_cuda else v
+        v = v.cuda() if self.ivectors.weight.is_cuda else v
         return self.ivectors(v)
 
     def forward_o(self, data):
@@ -62,6 +62,6 @@ class SkipGram(nn.Module):
         ovectors = self.embedding.forward_o(owords)
         nvectors = self.embedding.forward_o(nwords).neg()
 
-        oloss = torch.bmm(ovectors, ivectors).squeeze().sigmoid().log().mean()
+        oloss = torch.bmm(ovectors, ivectors).squeeze().sigmoid().log().mean(1)
         nloss = torch.bmm(nvectors, ivectors).squeeze().sigmoid().log().view(-1, context_size, self.n_negs).sum(2).mean(1)
         return -(oloss + nloss).mean()

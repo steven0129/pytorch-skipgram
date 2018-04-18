@@ -57,7 +57,7 @@ def train(**kwargs):
             optim.step()
 
         
-        tqdm.write(f'epochs = {epoch}, loss: {str(totalLoss)}')
+        tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss)}')
 
 
 if __name__ == '__main__':
