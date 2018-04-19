@@ -25,9 +25,9 @@ def skipgram(**kwargs):
     Y = []
     progress = 0
     win = vis.text(f'目前資料輸入進度: {progress}/{len(whiteSnake)}')
-    for XY in tqdm(pool.imap_unordered(list, whiteSnake), total=len(whiteSnake)):
-        X.append(XY[0])
-        Y.append(XY[1])
+    for x, y in pool.imap_unordered(tuple, tqdm(whiteSnake), chunksize=100):
+        X.append(x)
+        Y.append(y)
         progress += 1
         vis.text(f'目前資料輸入進度: {progress}/{len(whiteSnake)}', win=win)
         
