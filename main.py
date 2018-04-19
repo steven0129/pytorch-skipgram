@@ -10,7 +10,7 @@ import numpy as np
 options = Env()
 
 
-def train(**kwargs):
+def skipgram(**kwargs):
     for k_, v_ in kwargs.items():
         setattr(options, k_, v_)
 
