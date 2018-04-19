@@ -6,6 +6,7 @@ import torch
 import torch.utils.data as Data
 from torch.optim import Adam
 import numpy as np
+import multiprocessing
 
 options = Env()
 
@@ -15,15 +16,9 @@ def skipgram(**kwargs):
         setattr(options, k_, v_)
 
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
-
-    XY = []
-
     print('將每對pair分別存入X與Y...')
-    for pairs in tqdm(whiteSnake):
-        try:
-            XY.append(list(pairs))
-        except:
-            tqdm.write('error word')
+    pool = multiprocessing.Pool(4)
+    XY = pool.map(list, tqdm(whiteSnake))
     
     X = list(list(zip(*XY))[0])
     Y = list(list(zip(*XY))[1])
