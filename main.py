@@ -18,11 +18,13 @@ def skipgram(**kwargs):
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
     print('將每對pair分別存入X與Y...')
     pool = multiprocessing.Pool(options.core)
-    XY = pool.map(list, tqdm(whiteSnake))
-    
-    X = list(list(zip(*XY))[0])
-    Y = list(list(zip(*XY))[1])
 
+    X = []
+    Y = []
+    for XY in tqdm(pool.imap_unordered(list, whiteSnake), total=len(whiteSnake)):
+        X.append(XY[0])
+        Y.append(XY[1])
+    
     X = torch.Tensor(X).long()
     Y = torch.Tensor(Y).long()
 
