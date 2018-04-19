@@ -17,7 +17,7 @@ def skipgram(**kwargs):
 
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
     print('將每對pair分別存入X與Y...')
-    pool = multiprocessing.Pool(4)
+    pool = multiprocessing.Pool(options.core)
     XY = pool.map(list, tqdm(whiteSnake))
     
     X = list(list(zip(*XY))[0])
