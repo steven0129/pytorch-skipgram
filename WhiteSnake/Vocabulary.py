@@ -1,10 +1,27 @@
 from torch.utils import data
 from sklearn import preprocessing
 import numpy as np
+import numba as nb
 import pickle
 import csv
 import os
 
+@nb.jit(nopython=True)
+def getContext(windowSize, leftWords, rightWords):
+    contextWords = [0] * windowSize * (windowSize - 1)
+
+    count = 0
+    for i, context in enumerate(leftWords):
+        for j in range(i + 1):
+            contextWords[count] = context
+            count += 1
+
+    for i, context in enumerate(rightWords):
+        for j in range(i + 1):
+            contextWords[count] = context
+            count += 1
+
+    return contextWords
 
 class Dataset(data.Dataset):
     def __init__(self, ratio=0.6, windowSize=2):
@@ -31,17 +48,12 @@ class Dataset(data.Dataset):
         windows = self.labelEncoder.transform(windows).tolist()
         index += self.windowSize - 1
 
-        contexts1 = windows[length + index - self.windowSize:length + index - 1]
-        contexts2 = windows[length + index:length + index + self.windowSize - 1]
+        leftWords = windows[length + index - self.windowSize:length + index - 1]
+        rightWords = windows[length + index:length + index + self.windowSize - 1]
+        rightWords.reverse()
+
         center = windows[length + index - 1]
-        contextWords = []
-
-        for i, context in enumerate(contexts1):
-            contextWords.extend([context] * (i + 1))
-
-        contexts2.reverse()
-        for i, context in enumerate(contexts2):
-            contextWords.extend([context] * (i + 1))
+        contextWords = getContext(self.windowSize, leftWords, rightWords)
 
         return tuple((center, contextWords))
 

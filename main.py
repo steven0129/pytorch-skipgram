@@ -21,17 +21,16 @@ def skipgram(**kwargs):
     print('將每對pair分別存入X與Y...')
     pool = multiprocessing.Pool()
 
-    X = []
-    Y = []
+    X = [0] * len(whiteSnake)
+    Y = [0] * len(whiteSnake)
     progress = 0
     win = vis.text(f'目前資料輸入進度: {progress}/{len(whiteSnake)}')
-    for x, y in pool.imap_unordered(tuple, tqdm(whiteSnake), chunksize=100):
-        X.append(x)
-        Y.append(y)
+    for i, (x, y) in pool.imap_unordered(tuple, tqdm(enumerate(whiteSnake), total=len(whiteSnake)), chunksize=100):
+        X[i] = x
+        Y[i] = y
         progress += 1
         vis.text(f'目前資料輸入進度: {progress}/{len(whiteSnake)}', win=win)
         
-    
     X = torch.Tensor(X).long()
     Y = torch.Tensor(Y).long()
 
