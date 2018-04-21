@@ -1,7 +1,6 @@
 from torch.utils import data
 from sklearn import preprocessing
 from functools import reduce
-from numba import cuda
 import numpy as np
 import numba as nb
 import pickle
