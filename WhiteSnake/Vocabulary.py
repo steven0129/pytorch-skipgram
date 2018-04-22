@@ -37,7 +37,7 @@ class Dataset(data.Dataset):
         rightWords.reverse()
 
         center = windows[length + index - 1]
-        mapContexts = list(map(lambda x: [x[1]] * (x[0] + 1), enumerate(leftWords + rightWords)))
+        mapContexts = list(map(lambda x: [x[1]] * (x[0] + 1), enumerate(leftWords) + enumerate(rightWords)))
         contextWords = list(reduce(lambda x, y: x + y, mapContexts))
 
         return tuple((center, contextWords))
