@@ -14,12 +14,16 @@ import threading
 
 options = Env()
 
-
 def skipgram(**kwargs):
     for k_, v_ in kwargs.items():
         setattr(options, k_, v_)
 
-    vis = CustomVisdom(name='skigram')
+    vis = CustomVisdom(name=f'skipgram')
+    configSummary = ''
+    for key, value in Env.__dict__.items():
+        if not key.startswith('__'): configSummary += str(key) + '=' + str(value) + '<br>'
+    vis.text('config', f'{configSummary}')
+
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
     print('將每對pair分別存入X與Y...')
     pool = multiprocessing.Pool()
@@ -66,7 +70,7 @@ def skipgram(**kwargs):
             loss.backward()
             optim.step()
 
-            vis.text('progress', f'目前迭代進度:<br>batch={index}<br>epochs={epoch + 1}')
+            vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index}')
 
         
         tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss / options.batch_size)}')
