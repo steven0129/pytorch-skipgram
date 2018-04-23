@@ -1,5 +1,11 @@
 # Skipgram Using Pytorch
 
+## Installation
+
+```
+pip install -r requirements.txt
+```
+
 ## Quick Start
 
 ```
