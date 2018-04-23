@@ -4,4 +4,4 @@ __pycache__/
 *.pt
 *.pth
 *.npy
-*.txt
+result/*.txt
