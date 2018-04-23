@@ -1,1 +1,8 @@
-python main.py skipgram --use-gpu=True --core=6
+# Skipgram Using Pytorch
+
+## Quick Start
+
+```
+python -m visdom.server
+python main.py skipgram --use-gpu=True
+```
