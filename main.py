@@ -54,14 +54,15 @@ def skipgram(**kwargs):
         num_workers=options.core)
 
     print('開始進行迭代...')
+    word2Vec = Word2Vec(vocab_size=len(whiteSnake.labelEncoder.classes_), embedding_size=options.embedding_size)
+    sgns = SkipGram(embedding=word2Vec, vocab_size=len(whiteSnake.labelEncoder.classes_))
+    optim = Adam(sgns.parameters())
+
     for epoch in tqdm(range(options.epochs)):
         totalLoss = 0
 
         for index, (batchX, batchY) in tqdm(enumerate(loader)):
-            word2Vec = Word2Vec(vocab_size=len(whiteSnake.labelEncoder.classes_), embedding_size=500)
-            sgns = SkipGram(embedding=word2Vec, vocab_size=len(whiteSnake.labelEncoder.classes_))
-            optim = Adam(sgns.parameters())
-
+            
             if options.use_gpu:
                 sgns = sgns.cuda()
 
@@ -71,13 +72,17 @@ def skipgram(**kwargs):
             loss.backward()
             optim.step()
 
-            vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index}')
+            vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index + 1}')
 
         
         tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss / options.batch_size)}')
         vis.drawLine('loss', totalLoss / options.batch_size)
-        log.write([[str(epoch), str(totalLoss / options.batch_size)]])
         
+        log.write([[str(epoch), str(totalLoss / options.batch_size)]])
+        torch.save(sgns.state_dict(), f'log/model-{totalLoss / options.batch_size}.pt')
+        
+    np.savetxt('result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
+    np.save('result/word2vec', word2Vec.ivectors.weight.data.cpu().numpy())
 
 if __name__ == '__main__':
     import fire
