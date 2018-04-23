@@ -5,14 +5,15 @@ from model.Word2Vec import Word2Vec, SkipGram
 from torch.optim import Adam
 from Visualization import CustomVisdom
 from timeit import timeit
+from CustomIO import CSV
 import torch
 import torch.utils.data as Data
 import numpy as np
 import multiprocessing
 import threading
 
-
 options = Env()
+log = CSV(options.log_name)
 
 def skipgram(**kwargs):
     for k_, v_ in kwargs.items():
@@ -75,7 +76,8 @@ def skipgram(**kwargs):
         
         tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss / options.batch_size)}')
         vis.drawLine('loss', totalLoss / options.batch_size)
-
+        log.write([[str(epoch), str(totalLoss / options.batch_size)]])
+        
 
 if __name__ == '__main__':
     import fire
