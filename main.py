@@ -2,12 +2,15 @@ from WhiteSnake.Vocabulary import Dataset
 from config import Env
 from tqdm import tqdm
 from model.Word2Vec import Word2Vec, SkipGram
+from torch.optim import Adam
+from Visualization import CustomVisdom
+from timeit import timeit
 import torch
 import torch.utils.data as Data
-from torch.optim import Adam
 import numpy as np
 import multiprocessing
-from Visualization import CustomVisdom
+import threading
+
 
 options = Env()
 
@@ -49,7 +52,7 @@ def skipgram(**kwargs):
     for epoch in tqdm(range(options.epochs)):
         totalLoss = 0
 
-        for batchX, batchY in tqdm(loader):
+        for index, (batchX, batchY) in tqdm(enumerate(loader)):
             word2Vec = Word2Vec(vocab_size=len(whiteSnake.labelEncoder.classes_), embedding_size=500)
             sgns = SkipGram(embedding=word2Vec, vocab_size=len(whiteSnake.labelEncoder.classes_))
             optim = Adam(sgns.parameters())
@@ -63,8 +66,11 @@ def skipgram(**kwargs):
             loss.backward()
             optim.step()
 
+            vis.text('progress', f'目前迭代進度:<br>batch={index}<br>epochs={epoch + 1}')
+
         
-        tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss)}')
+        tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss / options.batch_size)}')
+        vis.drawLine('loss', totalLoss / options.batch_size)
 
 
 if __name__ == '__main__':
