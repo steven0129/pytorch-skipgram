@@ -6,5 +6,5 @@ class Env(object):
     epochs = 50 # epoch
     use_gpu = False # 是否使用GPU
     window_size = 4 # 設定Word2Vec的Window Size
-    log_name = 'loss' # 設定存放紀錄的檔案名稱
+    log_name = 'log/result/loss' # 設定存放紀錄的檔案名稱
     embedding_size = 500 # word2vec產生的embedding size

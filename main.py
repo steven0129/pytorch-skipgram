@@ -3,14 +3,12 @@ from config import Env
 from tqdm import tqdm
 from model.Word2Vec import Word2Vec, SkipGram
 from torch.optim import Adam
-from Visualization import CustomVisdom
-from timeit import timeit
-from CustomIO import CSV
+from utils.Visualization import CustomVisdom
+from utils.CustomIO import CSV
 import torch
 import torch.utils.data as Data
 import numpy as np
 import multiprocessing
-import threading
 
 options = Env()
 log = CSV(options.log_name)
@@ -62,7 +60,7 @@ def skipgram(**kwargs):
     for epoch in tqdm(range(options.epochs)):
         totalLoss = 0
 
-        for index, (batchX, batchY) in tqdm(enumerate(loader)):
+        for index, (batchX, batchY) in enumerate(tqdm(loader)):
             
             if options.use_gpu:
                 sgns = sgns.cuda()
@@ -76,14 +74,14 @@ def skipgram(**kwargs):
             vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index + 1}')
 
         
-        tqdm.write(f'epochs = {epoch + 1}, loss: {str(totalLoss / options.batch_size)}')
+        tqdm.write(f'epochs = {epoch + 1}, loss = {str(totalLoss / options.batch_size)}')
         vis.drawLine('loss', totalLoss / options.batch_size)
         
         log.write([[str(epoch), str(totalLoss / options.batch_size)]])
-        torch.save(sgns.state_dict(), f'log/model-{totalLoss / options.batch_size}.pt')
+        torch.save(sgns.state_dict(), f'log/model/model-{totalLoss / options.batch_size}.pt')
         
-    np.savetxt('result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
-    np.save('result/word2vec', word2Vec.ivectors.weight.data.cpu().numpy())
+    np.savetxt('log/result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
+    np.save('log/result/word2vec', word2Vec.ivectors.weight.data.cpu().numpy())
 
 if __name__ == '__main__':
     import fire
