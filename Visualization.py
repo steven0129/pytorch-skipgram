@@ -16,6 +16,6 @@ class CustomVisdom(object):
         try:
             if id not in self.line: self.line[id] = []
             self.line[id].append(value)
-            self.vis.line(Y=np.array(self.line[id]), win=id)
+            self.vis.line(X=np.arange(len(self.line[id])), Y=np.array(self.line[id]), win=id)
         except:
             pass

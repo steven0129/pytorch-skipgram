@@ -21,7 +21,8 @@ def skipgram(**kwargs):
 
     vis = CustomVisdom(name=f'skipgram')
     configSummary = ''
-    for key, value in Env.__dict__.items():
+    
+    for key, value in options.__dict__.items():
         if not key.startswith('__'): configSummary += str(key) + '=' + str(value) + '<br>'
     vis.text('config', f'{configSummary}')
 
