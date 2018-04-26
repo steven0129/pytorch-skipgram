@@ -30,14 +30,11 @@ def skipgram(**kwargs):
 
     X = [0] * len(whiteSnake)
     Y = [0] * len(whiteSnake)
-    progress = 0
 
-    vis.text('progress', f'目前資料輸入進度: {progress}/{len(whiteSnake)}')
     for i, (x, y) in pool.imap_unordered(tuple, tqdm(enumerate(whiteSnake), total=len(whiteSnake)), chunksize=100):
         X[i] = x
         Y[i] = y
-        progress += 1
-        vis.text('progress', f'目前資料輸入進度: {progress}/{len(whiteSnake)}')
+        vis.text('progress', f'目前資料輸入進度: {i + 1}/{len(whiteSnake)}')
         
     X = torch.Tensor(X).long()
     Y = torch.Tensor(Y).long()
@@ -75,7 +72,7 @@ def skipgram(**kwargs):
 
         
         tqdm.write(f'epochs = {epoch + 1}, loss = {str(totalLoss / options.batch_size)}')
-        vis.drawLine('loss', totalLoss / options.batch_size)
+        vis.drawLine('loss', x=epoch + 1, y=totalLoss / options.batch_size)
         
         log.write([[str(epoch), str(totalLoss / options.batch_size)]])
         torch.save(sgns.state_dict(), f'log/model/model-{totalLoss / options.batch_size}.pt')
