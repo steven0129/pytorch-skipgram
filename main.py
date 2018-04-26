@@ -4,7 +4,7 @@ from tqdm import tqdm
 from model.Word2Vec import Word2Vec, SkipGram
 from torch.optim import Adam
 from utils.Visualization import CustomVisdom
-from utils.CustomIO import CSV
+from utils.IO import CSV
 import torch
 import torch.utils.data as Data
 import numpy as np
