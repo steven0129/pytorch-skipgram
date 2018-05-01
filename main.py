@@ -25,6 +25,7 @@ def skipgram(**kwargs):
     vis.text('config', f'{configSummary}')
 
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
+    print(f'收錄{len(whiteSnake.labelEncoder.classes_)}個字...')
     print('將每對pair分別存入X與Y...')
     pool = multiprocessing.Pool()
 

@@ -19,9 +19,11 @@ class Dataset(data.Dataset):
         data = list(filter(lambda x: x != 'n', data))
         data = [x + 'n' if x == '\\' else x for x in data]
 
+        encoder = preprocessing.LabelEncoder()
+        encoder.fit(data)
+
         self.windowSize = windowSize
-        self.labelEncoder = pickle.load(
-            open('{}/label.pickle'.format(currentDir), 'rb'))
+        self.labelEncoder = encoder
         self.lengths = list(map(lambda x: len(x), data))
         self.data = data
 
