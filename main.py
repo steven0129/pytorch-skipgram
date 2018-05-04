@@ -80,7 +80,8 @@ def skipgram(**kwargs):
         torch.save(sgns.state_dict(), f'log/model/model-{avgLoss}.pt')
         
     np.savetxt('log/result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
-    np.save('log/result/word2vec', word2Vec.ivectors.weight.data.cpu().numpy())
+    np.save('log/result/word2vec.npy', word2Vec.ivectors.weight.data.cpu().numpy())
+    np.save('log/result/classes.npy', whiteSnake.labelEncoder.classes_)
 
 if __name__ == '__main__':
     import fire
