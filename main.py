@@ -57,7 +57,7 @@ def skipgram(**kwargs):
 
     for epoch in tqdm(range(options.epochs)):
         totalLoss = 0
-        batchNum = len(list(loader))
+        batchNum = int(len(whiteSnake) / options.batch_size)
 
         for index, (batchX, batchY) in enumerate(tqdm(loader)):
             
