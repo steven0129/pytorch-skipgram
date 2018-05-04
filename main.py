@@ -57,6 +57,7 @@ def skipgram(**kwargs):
 
     for epoch in tqdm(range(options.epochs)):
         totalLoss = 0
+        batchNum = len(list(loader))
 
         for index, (batchX, batchY) in enumerate(tqdm(loader)):
             
@@ -71,12 +72,12 @@ def skipgram(**kwargs):
 
             vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index + 1}')
 
+        avgLoss = totalLoss / batchNum
+        tqdm.write(f'epochs = {epoch + 1}, loss = {str(avgLoss)}')
+        vis.drawLine('loss', x=epoch + 1, y=avgLoss)
         
-        tqdm.write(f'epochs = {epoch + 1}, loss = {str(totalLoss / options.batch_size)}')
-        vis.drawLine('loss', x=epoch + 1, y=totalLoss / options.batch_size)
-        
-        log.write([[str(epoch), str(totalLoss / options.batch_size)]])
-        torch.save(sgns.state_dict(), f'log/model/model-{totalLoss / options.batch_size}.pt')
+        log.write([[str(epoch), str(avgLoss)]])
+        torch.save(sgns.state_dict(), f'log/model/model-{avgLoss}.pt')
         
     np.savetxt('log/result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
     np.save('log/result/word2vec', word2Vec.ivectors.weight.data.cpu().numpy())
