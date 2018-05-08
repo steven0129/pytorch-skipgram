@@ -76,7 +76,7 @@ def skipgram(**kwargs):
         tqdm.write(f'epochs = {epoch + 1}, loss = {str(avgLoss)}')
         vis.drawLine('loss', x=epoch + 1, y=avgLoss)
         
-        log.write([[str(epoch), str(avgLoss)]])
+        log.write([[str(epoch + 1), str(avgLoss)]])
         torch.save(sgns.state_dict(), f'log/model/model-{avgLoss}.pt')
         
     np.savetxt('log/result/word2vec.txt', word2Vec.ivectors.weight.data.cpu().numpy())
