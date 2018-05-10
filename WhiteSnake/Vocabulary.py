@@ -30,19 +30,18 @@ class Dataset(data.Dataset):
     def __getitem__(self, index):
         length = self.lengths[index]
         windows = self.data[-(self.windowSize - 1):] + self.data + self.data[:self.windowSize]
-        windows = self.labelEncoder.transform(windows).tolist()
+        windows = self.labelEncoder.transform(windows)
         index += self.windowSize - 1
 
         leftWords = windows[length + index - self.windowSize:length + index - 1]
         rightWords = windows[length + index:length + index + self.windowSize - 1]
-        rightWords.reverse()
+        rightWords = rightWords[::-1] # reverse array
 
-        center = windows[length + index - 1]
-        mapContexts = list(map(lambda x: [x[1]] * (x[0] + 1), list(enumerate(leftWords)) + list(enumerate(rightWords))))
+        center = windows[length + index - 1].item()
+        mapContexts = list(map(lambda x: [x[1].item()] * (x[0][0] + 1), list(np.ndenumerate(leftWords)) + list(np.ndenumerate(rightWords))))
         contextWords = list(reduce(lambda x, y: x + y, mapContexts))
 
-
-        return tuple((center, contextWords))
+        return (center, contextWords)
 
     def __len__(self):
         return len(self.data)

@@ -35,8 +35,9 @@ def skipgram(**kwargs):
     for i, (x, y) in pool.imap_unordered(tuple, tqdm(enumerate(whiteSnake), total=len(whiteSnake)), chunksize=100):
         X[i] = x
         Y[i] = y
+
         vis.text('progress', f'目前資料輸入進度: {i + 1}/{len(whiteSnake)}')
-        
+
     X = torch.Tensor(X).long()
     Y = torch.Tensor(Y).long()
 
