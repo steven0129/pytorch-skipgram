@@ -46,13 +46,13 @@ def skipgram(**kwargs):
     print(f'收錄{len(whiteSnake.labelEncoder.classes_)}個字...')
     print('將每對pair分別存入X與Y...')
 
-    X = []
-    Y = []
+    X = [0] * len(whiteSnake)
+    Y = [0] * len(whiteSnake)
 
     pool = multiprocessing.Pool()
     for i, (x, y) in enumerate(pool.imap_unordered(getContextWords, tqdm(whiteSnake))):
-        X.append(x)
-        Y.append(y)
+        X[i] = x
+        Y[i] = y
 
         vis.text('progress', f'目前資料輸入進度: {i + 1}/{len(whiteSnake)}')
 
