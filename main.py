@@ -5,6 +5,7 @@ from model.Word2Vec import Word2Vec, SkipGram
 from torch.optim import Adam
 from utils.Visualization import CustomVisdom
 from utils.IO import CSV
+from functools import reduce
 import torch
 import torch.utils.data as Data
 import numpy as np
@@ -12,6 +13,21 @@ import multiprocessing
 
 options = Env()
 log = CSV(options.log_name)
+
+def getContextWords(index, windowSize, labelEncoder, length, data):
+    windows = data[-(windowSize - 1):] + data + data[:windowSize]
+    windows = labelEncoder.transform(windows)
+    index += windowSize - 1
+
+    leftWords = windows[length + index - windowSize:length + index - 1]
+    rightWords = windows[length + index:length + index + windowSize - 1]
+    rightWords = rightWords[::-1] # reverse array
+
+    center = windows[length + index - 1].item()
+    mapContexts = list(map(lambda x: [x[1].item()] * (x[0][0] + 1), list(np.ndenumerate(leftWords)) + list(np.ndenumerate(rightWords))))
+    contextWords = list(reduce(lambda x, y: x + y, mapContexts))
+
+    return (center, contextWords)
 
 def skipgram(**kwargs):
     for k_, v_ in kwargs.items():
@@ -27,12 +43,12 @@ def skipgram(**kwargs):
     whiteSnake = Dataset(ratio=options.ratio, windowSize=options.window_size)
     print(f'收錄{len(whiteSnake.labelEncoder.classes_)}個字...')
     print('將每對pair分別存入X與Y...')
-    pool = multiprocessing.Pool()
 
     X = [0] * len(whiteSnake)
     Y = [0] * len(whiteSnake)
 
-    for i, (x, y) in pool.imap_unordered(tuple, tqdm(enumerate(whiteSnake), total=len(whiteSnake)), chunksize=100):
+    pool = multiprocessing.Pool()
+    for i, (x, y) in enumerate(pool.starmap(getContextWords, tqdm(whiteSnake))):
         X[i] = x
         Y[i] = y
 
