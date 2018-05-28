@@ -59,9 +59,7 @@ def skipgram(**kwargs):
     X = torch.Tensor(X).long()
     Y = torch.Tensor(Y).long()
 
-    dataset = Data.TensorDataset(
-        data_tensor=X,
-        target_tensor=Y)
+    dataset = Data.TensorDataset(X, Y)
     loader = Data.DataLoader(
         dataset=dataset,
         batch_size=options.batch_size,
@@ -92,7 +90,7 @@ def skipgram(**kwargs):
             vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index + 1}')
 
         avgLoss = totalLoss / batchNum
-        tqdm.write(f'epochs = {epoch + 1}, loss = {str(avgLoss)}')
+        tqdm.write(f'epochs = {epoch + 1}, loss = {float(avgLoss)}')
         vis.drawLine('loss', x=epoch + 1, y=avgLoss)
         
         log.write([[str(epoch + 1), str(avgLoss)]])

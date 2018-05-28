@@ -14,7 +14,9 @@ class Dataset(data.Dataset):
                 open(
                     '{}/white-snake-preprocessor.csv'.format(currentDir),
                     'r')))
+
         data = sum(data[:int(len(data)*ratio)], [])
+        data = list(map(lambda x: '<S>' + x + '<E>', data))
         data = list(''.join(data))
         data = list(filter(lambda x: x != 'n', data))
         data = [x + 'n' if x == '\\' else x for x in data]
